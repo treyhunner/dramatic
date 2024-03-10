@@ -11,7 +11,10 @@ The `dramatic` module includes utilities to cause cause all text output to displ
 
 **Note**: This project is based on a [Python Morsels](https://www.pythonmorsels.com) exercise. If you're working on that exercise right now, please don't look at the source code for this! 😉
 
-[![an adorable snake taking a bite out of a cookie with the words Python Morsels next to it (Python Morsels logo)](https://raw.githubusercontent.com/treyhunner/dramatic/main/screenshots/python-morsels-logo.png)](https://www.pythonmorsels.com)
+<a href="https://www.pythonmorsels.com">
+    <img src="https://raw.githubusercontent.com/treyhunner/dramatic/main/screenshots/python-morsels-logo.png" alt="an adorable snake taking a bite out of a cookie with the words Python Morsels next to it (Python Morsels logo)" width="250">
+</a>
+
 
 ![dramatic printing within a terminal](screenshots/repl.gif)
 
