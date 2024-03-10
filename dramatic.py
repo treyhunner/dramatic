@@ -35,7 +35,7 @@ from textwrap import dedent
 from time import perf_counter, sleep
 
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 __all__ = []
 _DEFAULT_SPEED = 75
 
