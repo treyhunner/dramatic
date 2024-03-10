@@ -1,7 +1,7 @@
 .PHONY: test
 
 # Define your environments
-ENVS := 3.8 3.9 3.10 3.11
+ENVS := 3.8 3.9 3.10 3.11 pypy3.10
 
 # Define the test command for a specific environment
 define TEST_COMMAND
