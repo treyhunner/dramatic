@@ -9,7 +9,22 @@ dramatic
 
 The `dramatic` module includes utilities to cause cause all text output to display character-by-character (it prints *dramatically*).
 
+**Note**: This project is based on a [Python Morsels](https://www.pythonmorsels.com) exercise. If you're working on that exercise right now, please don't look at the source code for this! 😉
+
+[![an adorable snake taking a bite out of a cookie with the words Python Morsels next to it (Python Morsels logo)](https://raw.githubusercontent.com/treyhunner/dramatic/main/screenshots/python-morsels-logo.png)](https://www.pythonmorsels.com)
+
 ![dramatic printing within a terminal](screenshots/repl.gif)
+
+
+Usage
+-----
+
+The `dramatic` module is available on [PyPI][].
+You can install it with `pip`:
+
+```bash
+$ python3 -m pip install dramatic
+```
 
 There are four primary ways to use the utilities in the `dramatic` module:
 
@@ -17,10 +32,6 @@ There are four primary ways to use the utilities in the `dramatic` module:
 2. As a decorator that temporarily makes output display dramatically
 3. Using a `dramatic.start()` function that makes output display dramatically
 4. Using a `dramatic.print` function to display specific text dramatically
-
-**Note**: This project is based on a [Python Morsels](https://www.pythonmorsels.com) exercise. If you're working on that exercise right now, please don't look at the source code for this! 😉
-
-[![an adorable snake taking a bite out of a cookie with the words Python Morsels next to it (Python Morsels logo)](https://raw.githubusercontent.com/treyhunner/dramatic/main/screenshots/python-morsels-logo.png)](https://www.pythonmorsels.com)
 
 
 Dramatic Context Manager
@@ -186,5 +197,6 @@ Credits
 This package was inspired by [the **dramatic print** Python Morsels exercise][dramatic print], which was partially inspired by Brandon Rhodes' [adventure][] Python port (which displays its text at 1200 baud).
 
 
+[pypi]: https://pypi.org/project/dramatic/
 [dramatic print]: https://www.pythonmorsels.com/exercises/57338fa2ecc342e3bad18afdbf12aacd/
 [adventure]: https://pypi.org/project/adventure/
