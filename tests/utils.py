@@ -36,15 +36,23 @@ def get_mock_args(mock_function):
     return [c.args[0].replace(b"\r", b"") for c in mock_function.mock_calls]
 
 
-def assert_write_and_sleep_calls(mocks, expected_writes):
+def byte_list(string):
+    return [c.encode() for c in string]
+
+
+def assert_write_and_sleep_calls(mocks, expected_writes, stderr=False):
     n = len(expected_writes)
-    assert get_mock_args(mocks.stdout_write) == [
-        c.encode() for c in expected_writes
-    ], "Each character was written separately"
-    assert len(mocks.clock.sleeps) == n, "Sleeps between each letter"
+    stream = "stderr" if stderr else "stdout"
+    actual = get_mock_args(mocks.stderr_write if stderr else mocks.stdout_write)
+    expected = byte_list(expected_writes)
+    # pytest doesn't seem to do this assert properly on its own...?
+    assert actual == expected, f"{actual} == {expected}"
+    # pytest doesn't seem to do this assert properly on its own...?
+    sleep_count = len(mocks.clock.sleeps)
+    assert sleep_count == n, f"Sleeps between each letter: {sleep_count} == {n}"
     assert [c[0] for c in mocks.mock_calls][: n * 2 - 1] == (
-        ["stdout_write", "sleep"] * n
-    )[: n * 2 - 1], f"Wrote to stdout, slept, and repeated {n} times"
+        [f"{stream}_write", "sleep"] * n
+    )[: n * 2 - 1], f"Wrote to {stream}, slept, and repeated {n} times"
 
 
 class Clock:
