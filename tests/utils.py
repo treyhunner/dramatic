@@ -58,8 +58,10 @@ def assert_write_and_sleep_calls(mocks, expected_writes, stderr=False):
 class Clock:
     """Fake version of time.perf_counter."""
 
-    def __init__(self):
+    def __init__(self, error_after=None, exception=KeyboardInterrupt):
         self.sleeps = []
+        self.error_after = error_after
+        self.exception = exception
 
     def __call__(self):
         return sum(self.sleeps)
@@ -69,3 +71,5 @@ class Clock:
 
     def increment(self, count):
         self.sleeps.append(count)
+        if self.error_after and len(self.sleeps) >= self.error_after:
+            raise self.exception

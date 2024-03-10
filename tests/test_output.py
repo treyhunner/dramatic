@@ -48,6 +48,28 @@ def test_custom_speed(mocks):
     assert mocks.clock.sleeps == [1 / 30] * 10
 
 
+def test_control_c(mocks):
+    with dramatic.output:
+        with patch_stdout(mocks):
+            # Hit Ctrl-C (raise KeyboardInterrupt) after 5 characters
+            mocks.clock.error_after = 5
+            sys.stdout.write("Dramatic?\n")
+
+            mocks.clock.reset()
+
+            # Hit Ctrl-C (raise KeyboardInterrupt) after 4 characters
+            mocks.clock.error_after = 4
+            sys.stdout.write("Hello!\n")
+
+    assert [c[0] for c in mocks.mock_calls] == (
+        ["stdout_write", "sleep"] * 5  # Slept 5 times successfully
+        + ["stdout_write"] * 5  # No sleeps after Control-C
+        + ["stdout_write", "sleep"] * 4  # Slept 4 times successfully
+        + ["stdout_write"] * 3  # No sleeps after Control-C
+    ), "Sleep only called once"
+    assert b"".join(get_mock_args(mocks.stdout_write)) == b"Dramatic?\nHello!\n"
+
+
 def test_writing_standard_error_dramatically(mocks):
     with dramatic.output:
         with patch_stderr(mocks):
