@@ -18,6 +18,10 @@ There are four primary ways to use the utilities in the `dramatic` module:
 3. Using a `dramatic.start()` function that makes output display dramatically
 4. Using a `dramatic.print` function to display specific text dramatically
 
+**Note**: This project is based on a [Python Morsels](https://www.pythonmorsels.com) exercise. If you're working on that exercise right now, please don't look at the source code for this! 😉
+
+[![an adorable snake taking a bite out of a cookie with the words Python Morsels next to it (Python Morsels logo)](https://raw.githubusercontent.com/treyhunner/dramatic/main/screenshots/python-morsels-logo.png)](https://www.pythonmorsels.com)
+
 
 Dramatic Context Manager
 ------------------------
@@ -179,7 +183,8 @@ $ python3 -m dramatic hello_world.py
 Credits
 -------
 
-This package was inspired by the `dramatic` Python Morsels exercise, which was partially inspired by Brandon Rhodes' [adventure][] Python port (which displays its text at 1200 baud).
+This package was inspired by [the **dramatic print** Python Morsels exercise][dramatic print], which was partially inspired by Brandon Rhodes' [adventure][] Python port (which displays its text at 1200 baud).
 
 
+[dramatic print]: https://www.pythonmorsels.com/exercises/57338fa2ecc342e3bad18afdbf12aacd/
 [adventure]: https://pypi.org/project/adventure/
