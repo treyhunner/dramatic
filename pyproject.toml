@@ -9,7 +9,14 @@ description = "Display all Python process output character-by-character"
 readme = "readme.md"
 requires-python = ">=3.8"
 license = "MIT"
-keywords = []
+keywords = [
+  "Python Morsels",
+  "modem",
+  "terminal",
+  "typewriter",
+  "TTY",
+  "teletype",
+]
 authors = [
   { name = "Trey Hunner" },
 ]
