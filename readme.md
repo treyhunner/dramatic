@@ -16,7 +16,7 @@ The `dramatic` module includes utilities to cause cause all text output to displ
 </a>
 
 
-![dramatic printing within a terminal](https://github.com/treyhunner/dramatic/blob/main/screenshots/repl.gif)
+![dramatic printing within a terminal](https://raw.githubusercontent.com/treyhunner/dramatic/main/screenshots/repl.gif)
 
 
 Usage
@@ -65,7 +65,7 @@ with dramatic.output.at_speed(30):
     main()
 ```
 
-![dramatic.output context manager demo](https://github.com/treyhunner/dramatic/blob/main/screenshots/context.gif)
+![dramatic.output context manager demo](https://raw.githubusercontent.com/treyhunner/dramatic/main/screenshots/context.gif)
 
 
 Dramatic Decorator
@@ -96,7 +96,7 @@ def main():
 main()
 ```
 
-![dramatic.output decorator demo](https://github.com/treyhunner/dramatic/blob/main/screenshots/decorator.gif)
+![dramatic.output decorator demo](https://raw.githubusercontent.com/treyhunner/dramatic/main/screenshots/decorator.gif)
 
 
 Manually Starting and Stopping
@@ -153,7 +153,7 @@ class CustomContextManager:
         print("Dramatic printing has stopped")
 ```
 
-![dramatic.start decorator demo](https://github.com/treyhunner/dramatic/blob/main/screenshots/start.gif)
+![dramatic.start decorator demo](https://raw.githubusercontent.com/treyhunner/dramatic/main/screenshots/start.gif)
 
 
 Dramatic Print
@@ -191,7 +191,7 @@ To dramatically run a Python file:
 $ python3 -m dramatic hello_world.py
 ```
 
-![dramatic module running demo](https://github.com/treyhunner/dramatic/blob/main/screenshots/module.gif)
+![dramatic module running demo](https://raw.githubusercontent.com/treyhunner/dramatic/main/screenshots/module.gif)
 
 
 Credits

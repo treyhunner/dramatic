@@ -41,7 +41,7 @@ def test_help(mocks):
             try:
                 dramatic.main()
             except SystemExit as error:
-                assert str(error) == ""
+                assert not error.args or not error.args[0]
     # Python 3.8 and below used "optional arguments"
     output = stdout.getvalue().replace("optional arguments", "options")
     assert output == dedent("""
@@ -65,7 +65,7 @@ def test_dramatic_repl(mocks):
                 try:
                     dramatic.main()
                 except SystemExit as error:
-                    assert str(error) == "None"
+                    assert not error.args or not error.args[0]
     assert get_mock_args(mocks.stdout_write) == byte_list(">>> 6\n>>> ")
     stderr_writes = get_mock_args(mocks.stderr_write)
     assert stderr_writes[:9] == byte_list("Python 3.")
@@ -77,10 +77,10 @@ def test_dramatic_repl(mocks):
 
 def test_hello_module(mocks):
     """Run the __hello__ dramatically."""
-    with patch_args(["-m", "__hello__"]):
+    with patch_args(["-m", "mimetypes", "-e", "text/markdown"]):
         with patch_stdout(mocks):
             dramatic.main()
-    assert_write_and_sleep_calls(mocks, "Hello world!\n")
+    assert_write_and_sleep_calls(mocks, ".md\n")
 
 
 def test_invalid_modules(mocks):

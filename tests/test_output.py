@@ -43,6 +43,7 @@ def test_writing_to_file(mocks):
             with patch_stdout(mocks):
                 with dramatic.output:
                     sys.stdout.write("Dramatic?\n")
+                    sys.stdout.flush()
         assert get_mock_args(mocks.stdout_write) == [b"Dramatic?\n"]
         assert [c[0] for c in mocks.mock_calls] == ["stdout_write"]
 
