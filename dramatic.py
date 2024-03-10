@@ -22,6 +22,7 @@ To print dramatically for the rest of your Python process:
 
     dramatic.start()
 """
+
 from argparse import ArgumentParser
 import code
 from contextlib import ContextDecorator, ExitStack
@@ -74,7 +75,7 @@ class DramaticTextIOWrapper(TextIOWrapper):
                 super().flush()
                 if should_sleep:
                     try:
-                        sleep(1/self.speed - (perf_counter() - before))
+                        sleep(1 / self.speed - (perf_counter() - before))
                     except KeyboardInterrupt:
                         should_sleep = False
                 before = perf_counter()
@@ -171,6 +172,7 @@ def parse_arguments():
     )
     parser.add_argument(
         "--speed",
+        metavar="speed",
         default=_DEFAULT_SPEED,
         type=Fraction,
         help=f"characters per second (default: {_DEFAULT_SPEED})",
