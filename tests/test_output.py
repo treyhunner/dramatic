@@ -1,8 +1,11 @@
+from contextlib import redirect_stdout
+from tempfile import NamedTemporaryFile
 import sys
 
 import dramatic
 
 from .utils import (
+    byte_list,
     patch_stdout,
     patch_stderr,
     assert_write_and_sleep_calls,
@@ -30,7 +33,28 @@ def test_writing_standard_output_dramatically(mocks):
     with dramatic.output:
         with patch_stdout(mocks):
             sys.stdout.write("Dramatic?\n")
-        assert_write_and_sleep_calls(mocks, "Dramatic?\n")
+    assert_write_and_sleep_calls(mocks, "Dramatic?\n")
+
+
+def test_writing_to_file(mocks):
+    """No sleeping when stdout points to a real file."""
+    with NamedTemporaryFile(mode="wt") as file:
+        with redirect_stdout(file):
+            with patch_stdout(mocks):
+                with dramatic.output:
+                    sys.stdout.write("Dramatic?\n")
+        assert get_mock_args(mocks.stdout_write) == [b"Dramatic?\n"]
+        assert [c[0] for c in mocks.mock_calls] == ["stdout_write"]
+
+
+def test_string_representation(mocks):
+    with patch_stdout(mocks):
+        with dramatic.output:
+            print(sys.stdout)
+    assert get_mock_args(mocks.stdout_write) == byte_list(
+        "DramaticTextIOWrapper(<_io.FileIO name=6 mode='rb+' closefd=True>)\n"
+    )
+    assert [c[0] for c in mocks.mock_calls] == ["stdout_write", "sleep"] * 67
 
 
 def test_default_speed(mocks):
@@ -47,13 +71,33 @@ def test_custom_speed(mocks):
     assert mocks.clock.sleeps == [1 / 30] * 10
 
 
+def test_control_c(mocks):
+    with dramatic.output:
+        with patch_stdout(mocks):
+            # Hit Ctrl-C (raise KeyboardInterrupt) after 5 characters
+            mocks.clock.error_after = 5
+            sys.stdout.write("Dramatic?\n")
+
+            mocks.clock.reset()
+
+            # Hit Ctrl-C (raise KeyboardInterrupt) after 4 characters
+            mocks.clock.error_after = 4
+            sys.stdout.write("Hello!\n")
+
+    assert [c[0] for c in mocks.mock_calls] == (
+        ["stdout_write", "sleep"] * 5  # Slept 5 times successfully
+        + ["stdout_write"] * 5  # No sleeps after Control-C
+        + ["stdout_write", "sleep"] * 4  # Slept 4 times successfully
+        + ["stdout_write"] * 3  # No sleeps after Control-C
+    ), "Sleep only called once"
+    assert b"".join(get_mock_args(mocks.stdout_write)) == b"Dramatic?\nHello!\n"
+
+
 def test_writing_standard_error_dramatically(mocks):
     with dramatic.output:
         with patch_stderr(mocks):
             sys.stderr.write("Dramatic?\n")
-    assert get_mock_args(mocks.stderr_write) == [
-        c.encode() for c in "Dramatic?\n"
-    ], "Each character was written separately"
+    assert get_mock_args(mocks.stderr_write) == byte_list("Dramatic?\n")
     assert len(mocks.clock.sleeps) == 10, "Sleeps between each letter"
     assert [c[0] for c in mocks.mock_calls] == (
         ["stderr_write", "sleep"] * 10
@@ -66,12 +110,8 @@ def test_stdout_and_stderr_are_separate(mocks):
             sys.stdout.write("123\n")
             sys.stderr.write("456\n")
             print("789")
-    assert get_mock_args(mocks.stdout_write) == [
-        c.encode() for c in "123\n789\n"
-    ], "Standard output characters written separately"
-    assert get_mock_args(mocks.stderr_write) == [
-        c.encode() for c in "456\n"
-    ], "Standard error characters written separately"
+    assert get_mock_args(mocks.stdout_write) == byte_list("123\n789\n")
+    assert get_mock_args(mocks.stderr_write) == byte_list("456\n")
     assert [c[0] for c in mocks.mock_calls] == (
         ["stdout_write", "sleep"] * 4
         + ["stderr_write", "sleep"] * 4

@@ -22,6 +22,7 @@ To print dramatically for the rest of your Python process:
 
     dramatic.start()
 """
+
 from argparse import ArgumentParser
 import code
 from contextlib import ContextDecorator, ExitStack
@@ -74,7 +75,7 @@ class DramaticTextIOWrapper(TextIOWrapper):
                 super().flush()
                 if should_sleep:
                     try:
-                        sleep(1/self.speed - (perf_counter() - before))
+                        sleep(1 / self.speed - (perf_counter() - before))
                     except KeyboardInterrupt:
                         should_sleep = False
                 before = perf_counter()
@@ -171,6 +172,7 @@ def parse_arguments():
     )
     parser.add_argument(
         "--speed",
+        metavar="speed",
         default=_DEFAULT_SPEED,
         type=Fraction,
         help=f"characters per second (default: {_DEFAULT_SPEED})",
@@ -187,8 +189,9 @@ def parse_arguments():
 
 
 def main():
+    version = sys.version.replace("\n", "")
     banner = dedent(f"""
-        Python {sys.version} on {sys.platform}
+        Python {version} on {sys.platform}
         Type "help", "copyright", "credits" or "license" for more information.
     """).strip("\n")
     args, unknown = parse_arguments()
@@ -202,7 +205,7 @@ def main():
                 + f" ({type(e).__name__}: {e})"
             )
         if not spec or not spec.origin:
-            sys.exit(f"No module named {module_name}")
+            sys.exit(f"No module named {args.module}")
         sys.argv = [spec.origin, *unknown]
         runpy.run_module(args.module, run_name="__main__")
     elif args.file:
