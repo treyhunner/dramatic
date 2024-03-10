@@ -41,7 +41,7 @@ def test_help(mocks):
             try:
                 dramatic.main()
             except SystemExit as error:
-                assert not error.args[0]
+                assert not error.args or not error.args[0]
     # Python 3.8 and below used "optional arguments"
     output = stdout.getvalue().replace("optional arguments", "options")
     assert output == dedent("""
@@ -65,7 +65,7 @@ def test_dramatic_repl(mocks):
                 try:
                     dramatic.main()
                 except SystemExit as error:
-                    assert not error.args[0]
+                    assert not error.args or not error.args[0]
     assert get_mock_args(mocks.stdout_write) == byte_list(">>> 6\n>>> ")
     stderr_writes = get_mock_args(mocks.stderr_write)
     assert stderr_writes[:9] == byte_list("Python 3.")
