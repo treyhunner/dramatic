@@ -5,7 +5,7 @@ dramatic
 [![Status](https://img.shields.io/pypi/status/dramatic.svg "Status")](https://pypi.org/project/dramatic/)
 [![Python Version](https://img.shields.io/pypi/pyversions/dramatic "Python Version")](https://pypi.org/project/dramatic)
 [![License](https://img.shields.io/pypi/l/dramatic "License")](https://opensource.org/licenses/MIT)
-[![Tests](https://github.com/treyhunner/dramatic/workflows/test/badge.svg "Tests")](https://github.com/treyhunner/dramatic/actions?workflow=test)
+[![Tests](https://github.com/treyhunner/dramatic/actions/workflows/test.yml/badge.svg "Tests")](https://github.com/treyhunner/dramatic/actions?workflow=test)
 
 The `dramatic` module includes utilities to cause cause all text output to display character-by-character (it prints *dramatically*).
 

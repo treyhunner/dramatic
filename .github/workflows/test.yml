@@ -1,4 +1,4 @@
-name: Python Test Workflow
+name: Tests
 
 on:
   push:
