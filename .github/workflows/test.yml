@@ -23,9 +23,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install hatch
-        hatch install
+        python -m pip install --upgrade pip hatch
 
     - name: Run tests
       run: hatch test
