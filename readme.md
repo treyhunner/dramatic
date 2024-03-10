@@ -3,7 +3,7 @@ dramatic
 
 The `dramatic` module includes utilities to cause cause all text output to display character-by-character (it prints *dramatically*).
 
-![dramatic printing within a terminal](demo1.gif)
+![dramatic printing within a terminal](screenshots/repl.gif)
 
 There are four primary ways to use the utilities in the `dramatic` module:
 
@@ -41,6 +41,8 @@ with dramatic.output.at_speed(30):
     main()
 ```
 
+![dramatic.output context manager demo](screenshots/context.gif)
+
 
 Dramatic Decorator
 ------------------
@@ -69,6 +71,8 @@ def main():
 
 main()
 ```
+
+![dramatic.output decorator demo](screenshots/decorator.gif)
 
 
 Manually Starting and Stopping
@@ -110,7 +114,6 @@ dramatic.start(stderr=False)
 main()
 ```
 
-
 To disable dramatic printing, the `dramatic.stop` function may be used:
 
 ```python
@@ -125,6 +128,8 @@ class CustomContextManager:
         dramatic.stop()
         print("Dramatic printing has stopped")
 ```
+
+![dramatic.start decorator demo](screenshots/start.gif)
 
 
 Dramatic Print
@@ -161,6 +166,8 @@ To dramatically run a Python file:
 ```bash
 $ python3 -m dramatic hello_world.py
 ```
+
+![dramatic module running demo](screenshots/module.gif)
 
 
 Credits
