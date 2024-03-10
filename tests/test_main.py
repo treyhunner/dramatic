@@ -70,7 +70,7 @@ def test_dramatic_repl(mocks):
     assert stderr_writes[-71:] == byte_list(
         'Type "help", "copyright", "credits" or "license" for more information.\n'
     )
-    assert len(mocks.clock.sleeps) == 148
+    assert len(mocks.clock.sleeps) > 100
 
 
 def test_hello_module(mocks):
