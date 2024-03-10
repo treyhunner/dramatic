@@ -189,8 +189,9 @@ def parse_arguments():
 
 
 def main():
+    version = sys.version.replace("\n", "")
     banner = dedent(f"""
-        Python {sys.version} on {sys.platform}
+        Python {version} on {sys.platform}
         Type "help", "copyright", "credits" or "license" for more information.
     """).strip("\n")
     args, unknown = parse_arguments()

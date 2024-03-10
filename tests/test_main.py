@@ -42,7 +42,9 @@ def test_help(mocks):
                 dramatic.main()
             except SystemExit as error:
                 assert str(error) == ""
-    assert stdout.getvalue() == dedent("""
+    # Python 3.8 and below used "optional arguments"
+    output = stdout.getvalue().replace("optional arguments", "options")
+    assert output == dedent("""
         usage: dramatic.py [-m mod] [--speed speed] [file]
 
         Run Python, but dramatically
@@ -66,7 +68,7 @@ def test_dramatic_repl(mocks):
                     assert str(error) == "None"
     assert get_mock_args(mocks.stdout_write) == byte_list(">>> 6\n>>> ")
     stderr_writes = get_mock_args(mocks.stderr_write)
-    assert stderr_writes[:10] == byte_list("Python 3.1")
+    assert stderr_writes[:9] == byte_list("Python 3.")
     assert stderr_writes[-71:] == byte_list(
         'Type "help", "copyright", "credits" or "license" for more information.\n'
     )
