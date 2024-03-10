@@ -83,6 +83,27 @@ def test_hello_module(mocks):
     assert_write_and_sleep_calls(mocks, "Hello world!\n")
 
 
+def test_invalid_modules(mocks):
+    with patch_args(["-m", "missing"]):
+        with patch_stdout(mocks):
+            try:
+                dramatic.main()
+            except SystemExit as error:
+                assert str(error) == "No module named missing"
+
+    with patch_args(["-m", "missing.py"]):
+        with patch_stdout(mocks):
+            try:
+                dramatic.main()
+            except SystemExit as error:
+                assert (
+                    str(error)
+                    == "Error while finding module specification "
+                    + "for 'missing.py' (ModuleNotFoundError: No module named "
+                    + "'missing')"
+                )
+
+
 def test_file(mocks):
     with NamedTemporaryFile(mode="wt", delete=False) as file:
         file.write('print("Hiya!")\n')

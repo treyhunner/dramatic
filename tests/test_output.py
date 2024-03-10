@@ -1,3 +1,5 @@
+from contextlib import redirect_stdout
+from tempfile import NamedTemporaryFile
 import sys
 
 import dramatic
@@ -31,7 +33,28 @@ def test_writing_standard_output_dramatically(mocks):
     with dramatic.output:
         with patch_stdout(mocks):
             sys.stdout.write("Dramatic?\n")
-        assert_write_and_sleep_calls(mocks, "Dramatic?\n")
+    assert_write_and_sleep_calls(mocks, "Dramatic?\n")
+
+
+def test_writing_to_file(mocks):
+    """No sleeping when stdout points to a real file."""
+    with NamedTemporaryFile(mode="wt") as file:
+        with redirect_stdout(file):
+            with patch_stdout(mocks):
+                with dramatic.output:
+                    sys.stdout.write("Dramatic?\n")
+        assert get_mock_args(mocks.stdout_write) == [b"Dramatic?\n"]
+        assert [c[0] for c in mocks.mock_calls] == ["stdout_write"]
+
+
+def test_string_representation(mocks):
+    with patch_stdout(mocks):
+        with dramatic.output:
+            print(sys.stdout)
+    assert get_mock_args(mocks.stdout_write) == byte_list(
+        "DramaticTextIOWrapper(<_io.FileIO name=6 mode='rb+' closefd=True>)\n"
+    )
+    assert [c[0] for c in mocks.mock_calls] == ["stdout_write", "sleep"] * 67
 
 
 def test_default_speed(mocks):

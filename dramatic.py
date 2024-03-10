@@ -205,7 +205,7 @@ def main():
                 + f" ({type(e).__name__}: {e})"
             )
         if not spec or not spec.origin:
-            sys.exit(f"No module named {module_name}")
+            sys.exit(f"No module named {args.module}")
         sys.argv = [spec.origin, *unknown]
         runpy.run_module(args.module, run_name="__main__")
     elif args.file:
