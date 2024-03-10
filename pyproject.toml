@@ -5,16 +5,16 @@ build-backend = "hatchling.build"
 [project]
 name = "dramatic"
 dynamic = ["version"]
-description = "Coming soon"
+description = "Display all Python process output character-by-character"
 readme = "readme.md"
 requires-python = ">=3.8"
 license = "MIT"
 keywords = []
 authors = [
-  { name = "Trey Hunner", email = "trey@pythonmorsels.com" },
+  { name = "Trey Hunner" },
 ]
 classifiers = [
-  "Development Status :: 1 - Planning",
+  "Development Status :: 2 - Pre-Alpha",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
