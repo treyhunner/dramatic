@@ -9,7 +9,8 @@ dramatic
 
 The `dramatic` module includes utilities to cause cause all text output to display character-by-character (it prints *dramatically*).
 
-**Note**: This project is based on a [Python Morsels](https://www.pythonmorsels.com) exercise. If you're working on that exercise right now, please don't look at the source code for this! 😉
+**Note**: This project is based on a [Python Morsels](https://www.pythonmorsels.com) exercise.
+If you're working on that exercise right now, please don't look at the source code for this! 😉
 
 <a href="https://www.pythonmorsels.com">
     <img src="https://raw.githubusercontent.com/treyhunner/dramatic/main/screenshots/python-morsels-logo.png" alt="an adorable snake taking a bite out of a cookie with the words Python Morsels next to it (Python Morsels logo)" width="250">
@@ -52,7 +53,7 @@ with dramatic.output:
     main()
 ```
 
-To change the printing speed from the default of 75 characters per second to another value (30 characters per minute in this case) use the `at_speed` method:
+To change the printing speed from the default of 75 characters per second to another value (30 characters per second in this case) use the `at_speed` method:
 
 
 ```python
@@ -114,7 +115,7 @@ dramatic.start()
 main()
 ```
 
-The `speed` keyword argument may be used to change the printing speed:
+The `speed` keyword argument may be used to change the printing speed (in characters per second):
 
 ```python
 import dramatic
@@ -138,7 +139,8 @@ dramatic.start(stderr=False)
 main()
 ```
 
-To disable dramatic printing, the `dramatic.stop` function may be used:
+To disable dramatic printing, the `dramatic.stop` function may be used.
+Here's an example [context manager][] that uses both `dramatic.start` and `dramatic.stop`:
 
 ```python
 import dramatic
@@ -191,7 +193,46 @@ To dramatically run a Python file:
 $ python3 -m dramatic hello_world.py
 ```
 
+The `dramatic` module also accepts a `--speed` argument to set the characters printed per second:
+
 ![dramatic module running demo](https://raw.githubusercontent.com/treyhunner/dramatic/main/screenshots/module.gif)
+
+
+Dramatic by default
+-------------------
+
+Want to make your Python interpreter dramatic *by default*?
+
+Creating a Python startup file and setting [the `PYTHONSTARTUP` environment variable](https://docs.python.org/3/using/cmdline.html#envvar-PYTHONSTARTUP) to its filename will run some code each time the Python interpreter launches.
+Add this code to your Python startup file to make your Python REPL dramatic by default:
+
+```python
+try:
+    import dramatic, sys
+    sys.__interactivehook__ = dramatic.start
+    del dramatic, sys
+except ImportError:
+    pass
+```
+
+Want to make *every* Python program dramatic?
+You'll need to make a `usercustomize.py` in your user site packages directory.
+Find this directory with:
+
+```bash
+$ python -c "import site; print(site.getusersitepackages())"
+```
+
+And create a `usercustomize.py` file in that directory, with this in it:
+
+```python
+import dramatic, sys
+dramatic.start()
+del dramatic, sys
+```
+
+Note that the `dramatic` module will need to be installed *globally* for this to work.
+To make Python dramatic within virtual environments you'll need to use a `sitecustomize.py` file in your virtual environments "site packages" directory instead.
 
 
 Credits
@@ -201,5 +242,6 @@ This package was inspired by [the **dramatic print** Python Morsels exercise][dr
 
 
 [pypi]: https://pypi.org/project/dramatic/
+[context manager]: https://www.pythonmorsels.com/what-is-a-context-manager/
 [dramatic print]: https://www.pythonmorsels.com/exercises/57338fa2ecc342e3bad18afdbf12aacd/
 [adventure]: https://pypi.org/project/adventure/
