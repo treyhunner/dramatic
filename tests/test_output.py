@@ -1,15 +1,15 @@
 from contextlib import redirect_stdout
-from tempfile import NamedTemporaryFile
 import sys
+from tempfile import NamedTemporaryFile
 
 import dramatic
 
 from .utils import (
-    byte_list,
-    patch_stdout,
-    patch_stderr,
     assert_write_and_sleep_calls,
+    byte_list,
     get_mock_args,
+    patch_stderr,
+    patch_stdout,
 )
 
 

@@ -27,8 +27,8 @@ from argparse import ArgumentParser
 import code
 from contextlib import ContextDecorator, ExitStack
 from fractions import Fraction
-from io import TextIOWrapper
 from importlib.util import find_spec
+from io import TextIOWrapper
 import runpy
 import sys
 from textwrap import dedent
@@ -188,14 +188,19 @@ def parse_arguments():
     return parser.parse_known_args()
 
 
-def main():
+def repl_banner():
     version = sys.version.replace("\n", "")
-    banner = dedent(f"""
+    return dedent(f"""
         Python {version} on {sys.platform}
         Type "help", "copyright", "credits" or "license" for more information.
     """).strip("\n")
+
+
+def main():
     args, unknown = parse_arguments()
     start(speed=args.speed)
+
+    # Run the given Python module
     if args.module:
         try:
             spec = find_spec(args.module)
@@ -209,13 +214,17 @@ def main():
         index = sys.argv.index(args.module)
         sys.argv = [spec.origin, *sys.argv[index + 1 :]]
         runpy.run_module(args.module, run_name="__main__")
+
+    # Run the given Python file
     elif args.file:
         sys.argv = [args.file, *unknown]
         runpy.run_path(args.file, run_name="__main__")
-    if not (args.module or args.file):
+
+    # Start a Python REPL
+    else:
         code.interact(
             local={"__name__": "__main__", "__builtins__": __builtins__},
-            banner=banner,
+            banner=repl_banner(),
             exitmsg="",
         )
 
