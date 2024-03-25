@@ -27,8 +27,8 @@ from argparse import ArgumentParser
 import code
 from contextlib import ContextDecorator, ExitStack
 from fractions import Fraction
-from io import TextIOWrapper
 from importlib.util import find_spec
+from io import TextIOWrapper
 import runpy
 import sys
 from textwrap import dedent

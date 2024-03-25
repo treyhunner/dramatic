@@ -2,7 +2,7 @@ from io import StringIO
 
 import dramatic
 
-from .utils import patch_stdout, assert_write_and_sleep_calls
+from .utils import assert_write_and_sleep_calls, patch_stdout
 
 
 def test_print_single_argument(mocks):
