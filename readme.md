@@ -1,14 +1,12 @@
 dramatic
 ========
 
-[![PyPI](https://img.shields.io/pypi/v/dramatic.svg "PyPI")](https://pypi.org/project/dramatic/)
-[![Status](https://img.shields.io/pypi/status/dramatic.svg "Status")](https://pypi.org/project/dramatic/)
-[![Python Version](https://img.shields.io/pypi/pyversions/dramatic "Python Version")](https://pypi.org/project/dramatic)
-[![License](https://img.shields.io/pypi/l/dramatic "License")](https://opensource.org/licenses/MIT)
+[![PyPI - Version](https://img.shields.io/pypi/v/dramatic.svg?label=PyPI)](https://pypi.org/project/dramatic/)
+[![License](https://img.shields.io/pypi/l/dramatic?label=License)](https://opensource.org/licenses/MIT)
 [![Tests](https://github.com/treyhunner/dramatic/actions/workflows/test.yml/badge.svg "Tests")](https://github.com/treyhunner/dramatic/actions?workflow=test)
-[![codecov](https://codecov.io/gh/treyhunner/dramatic/graph/badge.svg?token=e2Ah1TKt3g "Coverage")](https://codecov.io/gh/treyhunner/dramatic)
+[![Codecov](https://codecov.io/gh/treyhunner/dramatic/graph/badge.svg?token=e2Ah1TKt3g&label=Codecov "Coverage")](https://codecov.io/gh/treyhunner/dramatic)
 
-The `dramatic` module includes utilities to cause cause all text output to display character-by-character (it prints *dramatically*).
+The `dramatic` module includes utilities to cause all text output to display character-by-character (it prints *dramatically*).
 
 **Note**: This project is based on a [Python Morsels](https://www.pythonmorsels.com) exercise.
 If you're working on that exercise right now, please don't look at the source code for this! 😉
@@ -42,7 +40,7 @@ There are four primary ways to use the utilities in the `dramatic` module:
 Dramatic Context Manager
 ------------------------
 
-The `dramatic.output` context manager will temporarily cause all standard output and standard error to display dramatically:
+The `dramatic.output` [context manager][] will temporarily cause all standard output and standard error to display dramatically:
 
 ```python
 import dramatic
@@ -67,13 +65,15 @@ with dramatic.output.at_speed(30):
     main()
 ```
 
+Example context manager usage:
+
 ![dramatic.output context manager demo](https://raw.githubusercontent.com/treyhunner/dramatic/main/screenshots/context.gif)
 
 
 Dramatic Decorator
 ------------------
 
-The `dramatic.output` decorator will cause all standard output and standard error to display dramatically while the decorated function is running:
+The `dramatic.output` [decorator][] will cause all standard output and standard error to display dramatically while the decorated function is running:
 
 ```python
 import dramatic
@@ -97,6 +97,8 @@ def main():
 
 main()
 ```
+
+Example decorator usage:
 
 ![dramatic.output decorator demo](https://raw.githubusercontent.com/treyhunner/dramatic/main/screenshots/decorator.gif)
 
@@ -156,6 +158,8 @@ class CustomContextManager:
         print("Dramatic printing has stopped")
 ```
 
+Example `start` and `stop` usage:
+
 ![dramatic.start decorator demo](https://raw.githubusercontent.com/treyhunner/dramatic/main/screenshots/start.gif)
 
 
@@ -173,9 +177,9 @@ dramatic.print("This will print some text dramatically")
 Other Features
 --------------
 
-Pressing `Ctrl-C` while text prints dramatically will cause the remaining text-to-be-printed to print immediately.
+Pressing `Ctrl-C` while text is printing dramatically will cause the remaining text to print immediately.
 
-To start a dramatic Python REPL:
+To start a dramatic [Python REPL][]:
 
 ```bash
 $ python3 -m dramatic
@@ -194,12 +198,13 @@ To dramatically run a Python file:
 $ python3 -m dramatic hello_world.py
 ```
 
-The `dramatic` module also accepts a `--speed` argument to set the characters printed per second:
+The `dramatic` module also accepts a `--speed` argument to set the characters printed per second.
+In this example we're increasing the speed from 75 characters-per-second to 120:
 
 ![dramatic module running demo](https://raw.githubusercontent.com/treyhunner/dramatic/main/screenshots/module.gif)
 
 
-Dramatic by default
+Dramatic By Default
 -------------------
 
 Want to make your Python interpreter dramatic *by default*?
@@ -244,5 +249,7 @@ This package was inspired by [the **dramatic print** Python Morsels exercise][dr
 
 [pypi]: https://pypi.org/project/dramatic/
 [context manager]: https://www.pythonmorsels.com/what-is-a-context-manager/
+[decorator]: https://www.pythonmorsels.com/what-is-a-decorator/
+[python repl]: https://www.pythonmorsels.com/using-the-python-repl/
 [dramatic print]: https://www.pythonmorsels.com/exercises/57338fa2ecc342e3bad18afdbf12aacd/
 [adventure]: https://pypi.org/project/adventure/
