@@ -1,12 +1,10 @@
 dramatic
 ========
 
-[![PyPI](https://img.shields.io/pypi/v/dramatic.svg "PyPI")](https://pypi.org/project/dramatic/)
-[![Status](https://img.shields.io/pypi/status/dramatic.svg "Status")](https://pypi.org/project/dramatic/)
-[![Python Version](https://img.shields.io/pypi/pyversions/dramatic "Python Version")](https://pypi.org/project/dramatic)
-[![License](https://img.shields.io/pypi/l/dramatic "License")](https://opensource.org/licenses/MIT)
+[![PyPI - Version](https://img.shields.io/pypi/v/dramatic.svg?label=PyPI)](https://pypi.org/project/dramatic/)
+[![License](https://img.shields.io/pypi/l/dramatic?label=License)](https://opensource.org/licenses/MIT)
 [![Tests](https://github.com/treyhunner/dramatic/actions/workflows/test.yml/badge.svg "Tests")](https://github.com/treyhunner/dramatic/actions?workflow=test)
-[![codecov](https://codecov.io/gh/treyhunner/dramatic/graph/badge.svg?token=e2Ah1TKt3g "Coverage")](https://codecov.io/gh/treyhunner/dramatic)
+[![Codecov](https://codecov.io/gh/treyhunner/dramatic/graph/badge.svg?token=e2Ah1TKt3g&label=Codecov "Coverage")](https://codecov.io/gh/treyhunner/dramatic)
 
 The `dramatic` module includes utilities to cause cause all text output to display character-by-character (it prints *dramatically*).
 
