@@ -174,10 +174,8 @@ dramatic.print("This will print some text dramatically")
 ```
 
 
-Other Features
---------------
-
-Pressing `Ctrl-C` while text is printing dramatically will cause the remaining text to print immediately.
+Dramatic Interpreter
+--------------------
 
 To start a dramatic [Python REPL][]:
 
@@ -204,41 +202,34 @@ In this example we're increasing the speed from 75 characters-per-second to 120:
 ![dramatic module running demo](https://raw.githubusercontent.com/treyhunner/dramatic/main/screenshots/module.gif)
 
 
-Dramatic By Default
--------------------
+Maximum Drama
+-------------
 
 Want to make your Python interpreter dramatic *by default*?
 
-Creating a Python startup file and setting [the `PYTHONSTARTUP` environment variable](https://docs.python.org/3/using/cmdline.html#envvar-PYTHONSTARTUP) to its filename will run some code each time the Python interpreter launches.
-Add this code to your Python startup file to make your Python REPL dramatic by default:
-
-```python
-try:
-    import dramatic, sys
-    sys.__interactivehook__ = dramatic.start
-    del dramatic, sys
-except ImportError:
-    pass
-```
-
-Want to make *every* Python program dramatic?
-You'll need to make a `usercustomize.py` in your user site packages directory.
-Find this directory with:
+Run the `dramatic` module as a script with the `--max-drama` argument to modify Python so that *all* your Python programs will print dramatically:
 
 ```bash
-$ python -c "import site; print(site.getusersitepackages())"
+$ python3 -m dramatic --max-drama
+This will cause all Python programs to run dramatically.
+Running --min-drama will undo this operation.
+Are you sure? [y/N]
 ```
 
-And create a `usercustomize.py` file in that directory, with this in it:
+If the drama is too much, run the module again with the argument `--min-drama` to undo:
 
-```python
-import dramatic, sys
-dramatic.start()
-del dramatic, sys
+```bash
+$ python3 -m dramatic --min-drama
+Deleted file /home/trey/.local/lib/python3.12/site-packages/dramatic.pth
+Deleted file /home/trey/.local/lib/python3.12/site-packages/_dramatic.py
+No drama.
 ```
 
-Note that the `dramatic` module will need to be installed *globally* for this to work.
-To make Python dramatic within virtual environments you'll need to use a `sitecustomize.py` file in your virtual environments "site packages" directory instead.
+
+Other Features
+--------------
+
+Pressing `Ctrl-C` while text is printing dramatically will cause the remaining text to print immediately.
 
 
 Credits
