@@ -29,7 +29,9 @@ from contextlib import ContextDecorator, ExitStack
 from fractions import Fraction
 from importlib.util import find_spec
 from io import TextIOWrapper
+from pathlib import Path
 import runpy
+from site import getusersitepackages
 import sys
 from textwrap import dedent
 from time import perf_counter, sleep
@@ -164,6 +166,16 @@ def stop():
 def parse_arguments():
     parser = ArgumentParser(description="Run Python, but dramatically", add_help=False)
     parser.add_argument(
+        "--max-drama",
+        action="store_true",
+        help="Monkey patch Python to make ALL Python programs to be dramatic",
+    )
+    parser.add_argument(
+        "--min-drama",
+        action="store_true",
+        help="Undo --max-drama",
+    )
+    parser.add_argument(
         "-m",
         metavar="mod",
         dest="module",
@@ -198,6 +210,38 @@ def repl_banner():
 def main():
     args, unknown = parse_arguments()
     start(speed=args.speed)
+
+    # Monkey patch Python so all Python programs to print dramatically
+    if args.max_drama:
+        site_packages = Path(getusersitepackages())
+        dramatic_py = site_packages / "_dramatic.py"
+        dramatic_pth = site_packages / "dramatic.pth"
+        print("This will cause all Python programs to run dramatically.")
+        print("Running --min-drama will undo this operation.")
+        if input("Are you sure? [y/N] ").casefold() != "y":
+            sys.exit("Okay. No drama.")
+        site_packages.mkdir(parents=True, exist_ok=True)
+        dramatic_py.write_text(Path(__file__).read_text())
+        print(f"Wrote file {dramatic_py}")
+        dramatic_pth.write_text("import _dramatic; _dramatic.start()\n")
+        print(f"Wrote file {dramatic_pth}")
+        sys.exit(0)
+
+    # Un-monkey patch Python to stop printing dramatically by default
+    if args.min_drama:
+        site_packages = Path(getusersitepackages())
+        dramatic_py = site_packages / "_dramatic.py"
+        dramatic_pth = site_packages / "dramatic.pth"
+        try:
+            dramatic_pth.unlink()
+        except FileNotFoundError:
+            print(f"File not found: {dramatic_pth}")
+        else:
+            print(f"Deleted file {dramatic_pth}")
+        dramatic_py.unlink()
+        print(f"Deleted file {dramatic_py}")
+        print("No drama.")
+        sys.exit(0)
 
     # Run the given Python module
     if args.module:
