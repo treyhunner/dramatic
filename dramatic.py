@@ -36,7 +36,7 @@ import sys
 from textwrap import dedent
 from time import perf_counter, sleep
 
-__version__ = "0.3.0"
+__version__ = "0.4.0.alpha1"
 __all__ = []  # Disable "from dramatic import *"
 _DEFAULT_SPEED = 75
 
