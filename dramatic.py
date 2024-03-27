@@ -168,7 +168,7 @@ def parse_arguments():
     parser.add_argument(
         "--max-drama",
         action="store_true",
-        help="Monkey patch Python to make ALL Python programs to be dramatic",
+        help="Monkey patch Python so ALL programs run dramatically",
     )
     parser.add_argument(
         "--min-drama",
@@ -238,8 +238,12 @@ def main():
             print(f"File not found: {dramatic_pth}")
         else:
             print(f"Deleted file {dramatic_pth}")
-        dramatic_py.unlink()
-        print(f"Deleted file {dramatic_py}")
+        try:
+            dramatic_py.unlink()
+        except FileNotFoundError:
+            print(f"File not found: {dramatic_py}")
+        else:
+            print(f"Deleted file {dramatic_py}")
         print("No drama.")
         sys.exit(0)
 
