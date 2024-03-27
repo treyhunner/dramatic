@@ -229,7 +229,10 @@ No drama.
 Other Features
 --------------
 
-Pressing `Ctrl-C` while text is printing dramatically will cause the remaining text to print immediately.
+Other features of note:
+
+- Pressing `Ctrl-C` while text is printing dramatically will cause the remaining text to print immediately.
+- Dramatic printing is automatically disabled when the output stream is piped to a file (e.g. `python my_script.py > output.txt`)
 
 
 Credits
