@@ -142,17 +142,18 @@ def test_max_drama(mocks, mocker, tmp_path):
     dramatic_pth_text = dramatic_pth.read_text()
     assert dramatic_pth_text == "import _dramatic; _dramatic.start()\n"
 
-    assert_write_and_sleep_calls(
-        mocks,
-        dedent(
-            f"""
-            This will cause all Python programs to run dramatically.
-            Running --min-drama will undo this operation.
-            Are you sure? [y/N] Wrote file {dramatic_py}
-            Wrote file {dramatic_pth}
-            """
-        ).lstrip("\n"),
-    )
+    expected = dedent(
+        f"""
+        This will cause all Python programs to run dramatically.
+        Running with --min-drama will undo this operation.
+        Are you sure? [y/N] Wrote file {dramatic_py}
+        Wrote file {dramatic_pth}
+        To undo run:
+        {sys.executable} -m _dramatic --min-drama
+        """
+    ).lstrip("\n")
+    assert b"".join(get_mock_args(mocks.stdout_write)) == expected.encode()
+    assert_write_and_sleep_calls(mocks, expected)
 
 
 def test_max_drama_no(mocks, mocker, tmp_path):
@@ -172,15 +173,14 @@ def test_max_drama_no(mocks, mocker, tmp_path):
     assert not dramatic_py.exists()
     assert not dramatic_pth.exists()
 
-    assert_write_and_sleep_calls(
-        mocks,
-        dedent(
-            """
+    expected = dedent(
+        """
             This will cause all Python programs to run dramatically.
-            Running --min-drama will undo this operation.
+            Running with --min-drama will undo this operation.
             Are you sure? [y/N] """
-        ).lstrip("\n"),
-    )
+    ).lstrip("\n")
+    assert b"".join(get_mock_args(mocks.stdout_write)) == expected.encode()
+    assert_write_and_sleep_calls(mocks, expected)
 
 
 def test_min_drama(mocks, mocker, tmp_path):

@@ -217,7 +217,7 @@ def main():
         dramatic_py = site_packages / "_dramatic.py"
         dramatic_pth = site_packages / "dramatic.pth"
         print("This will cause all Python programs to run dramatically.")
-        print("Running --min-drama will undo this operation.")
+        print("Running with --min-drama will undo this operation.")
         if input("Are you sure? [y/N] ").casefold() != "y":
             sys.exit("Okay. No drama.")
         site_packages.mkdir(parents=True, exist_ok=True)
@@ -225,6 +225,8 @@ def main():
         print(f"Wrote file {dramatic_py}")
         dramatic_pth.write_text("import _dramatic; _dramatic.start()\n")
         print(f"Wrote file {dramatic_pth}")
+        print("To undo run:")
+        print(f"{sys.executable} -m _dramatic --min-drama")
         sys.exit(0)
 
     # Un-monkey patch Python to stop printing dramatically by default
