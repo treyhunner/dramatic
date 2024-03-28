@@ -1,5 +1,5 @@
-dramatic
-========
+Make your Python output dramatic
+================================
 
 [![PyPI - Version](https://img.shields.io/pypi/v/dramatic.svg?label=PyPI)](https://pypi.org/project/dramatic/)
 [![License](https://img.shields.io/pypi/l/dramatic?label=License)](https://opensource.org/licenses/MIT)
@@ -16,7 +16,7 @@ If you're working on that exercise right now, please don't look at the source co
 </a>
 
 
-![dramatic printing within a terminal](https://raw.githubusercontent.com/treyhunner/dramatic/main/screenshots/repl.gif)
+![dramatic printing within a terminal](https://raw.githubusercontent.com/treyhunner/dramatic/main/screenshots/main.gif)
 
 
 Usage
@@ -184,6 +184,8 @@ $ python3 -m dramatic
 >>>
 ```
 
+![dramatic printing within a terminal](https://raw.githubusercontent.com/treyhunner/dramatic/main/screenshots/repl.gif)
+
 To dramatically run a Python module:
 
 ```bash
@@ -216,6 +218,8 @@ Running --min-drama will undo this operation.
 Are you sure? [y/N]
 ```
 
+![python3 -m dramatic --max-drama](https://raw.githubusercontent.com/treyhunner/dramatic/main/screenshots/max.gif)
+
 If the drama is too much, run the module again with the argument `--min-drama` to undo:
 
 ```bash
@@ -224,6 +228,12 @@ Deleted file /home/trey/.local/lib/python3.12/site-packages/dramatic.pth
 Deleted file /home/trey/.local/lib/python3.12/site-packages/_dramatic.py
 No drama.
 ```
+
+![python3 -m dramatic --min-drama](https://raw.githubusercontent.com/treyhunner/dramatic/main/screenshots/min.gif)
+
+This even works if you don't have the `dramatic` module installed.
+Just download [dramatic.py](https://github.com/treyhunner/dramatic/blob/main/dramatic.py) and run it with `--max-drama`!
+To disable the drama, you'll need to run `python3 -m _dramatic --min-drama` (not the `_` before `dramatic`).
 
 
 Other Features
