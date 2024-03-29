@@ -54,6 +54,7 @@ class DramaticTextIOWrapper(TextIOWrapper):
     def __init__(self, *args, speed=None, **kwargs):
         if speed is None:
             speed = _DEFAULT_SPEED
+        self.no_sleep_until = perf_counter()
         self.speed = speed
         super().__init__(*args, **kwargs)
 
@@ -69,17 +70,15 @@ class DramaticTextIOWrapper(TextIOWrapper):
         If Ctrl-C is pressed, the remaining text will print immediately.
         """
         if self.isatty():
-            before = perf_counter()
-            should_sleep = True
             for char in string:
+                before = perf_counter()
                 super().write(char)
                 super().flush()
-                if should_sleep:
+                if before >= self.no_sleep_until:
                     try:
                         sleep(1 / self.speed - (perf_counter() - before))
                     except KeyboardInterrupt:
-                        should_sleep = False
-                before = perf_counter()
+                        self.no_sleep_until = perf_counter() + 0.5
         else:
             super().write(string)
 
@@ -105,8 +104,9 @@ class _DramaticPatcher(ContextDecorator):
 
     def __enter__(self):
         self.old = getattr(sys, self.name)
-        self.new = DramaticTextIOWrapper(self.old.buffer, speed=self.speed)
-        setattr(sys, self.name, self.new)
+        if not isinstance(self.old, DramaticTextIOWrapper):
+            self.new = DramaticTextIOWrapper(self.old.buffer, speed=self.speed)
+            setattr(sys, self.name, self.new)
         return self.new
 
     def __exit__(self, *args):
