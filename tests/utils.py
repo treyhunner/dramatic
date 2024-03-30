@@ -32,7 +32,7 @@ def patch_stderr(mocks):
 
 
 def get_mock_args(mock_function):
-    r"""Convert \n\r to \n in stdout/stderr mock callse."""
+    r"""Convert \n\r to \n in stdout/stderr mock calls."""
     return [c.args[0].replace(b"\r", b"") for c in mock_function.mock_calls]
 
 

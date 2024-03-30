@@ -36,7 +36,7 @@ import sys
 from textwrap import dedent
 from time import perf_counter, sleep
 
-__version__ = "0.4.0.alpha1"
+__version__ = "0.4.0"
 __all__ = []  # Disable "from dramatic import *"
 _DEFAULT_SPEED = 75
 
@@ -54,6 +54,7 @@ class DramaticTextIOWrapper(TextIOWrapper):
     def __init__(self, *args, speed=None, **kwargs):
         if speed is None:
             speed = _DEFAULT_SPEED
+        self.no_sleep_until = perf_counter()
         self.speed = speed
         super().__init__(*args, **kwargs)
 
@@ -69,17 +70,15 @@ class DramaticTextIOWrapper(TextIOWrapper):
         If Ctrl-C is pressed, the remaining text will print immediately.
         """
         if self.isatty():
-            before = perf_counter()
-            should_sleep = True
             for char in string:
+                before = perf_counter()
                 super().write(char)
                 super().flush()
-                if should_sleep:
+                if before >= self.no_sleep_until:
                     try:
                         sleep(1 / self.speed - (perf_counter() - before))
                     except KeyboardInterrupt:
-                        should_sleep = False
-                before = perf_counter()
+                        self.no_sleep_until = perf_counter() + 0.5
         else:
             super().write(string)
 
@@ -105,8 +104,9 @@ class _DramaticPatcher(ContextDecorator):
 
     def __enter__(self):
         self.old = getattr(sys, self.name)
-        self.new = DramaticTextIOWrapper(self.old.buffer, speed=self.speed)
-        setattr(sys, self.name, self.new)
+        if not isinstance(self.old, DramaticTextIOWrapper):
+            self.new = DramaticTextIOWrapper(self.old.buffer, speed=self.speed)
+            setattr(sys, self.name, self.new)
         return self.new
 
     def __exit__(self, *args):
@@ -217,7 +217,7 @@ def main():
         dramatic_py = site_packages / "_dramatic.py"
         dramatic_pth = site_packages / "dramatic.pth"
         print("This will cause all Python programs to run dramatically.")
-        print("Running --min-drama will undo this operation.")
+        print("Running with --min-drama will undo this operation.")
         if input("Are you sure? [y/N] ").casefold() != "y":
             sys.exit("Okay. No drama.")
         site_packages.mkdir(parents=True, exist_ok=True)
@@ -225,6 +225,8 @@ def main():
         print(f"Wrote file {dramatic_py}")
         dramatic_pth.write_text("import _dramatic; _dramatic.start()\n")
         print(f"Wrote file {dramatic_pth}")
+        print("To undo run:")
+        print(f"{sys.executable} -m _dramatic --min-drama")
         sys.exit(0)
 
     # Un-monkey patch Python to stop printing dramatically by default

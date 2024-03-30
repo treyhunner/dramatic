@@ -2,6 +2,8 @@ from contextlib import redirect_stdout
 import sys
 from tempfile import NamedTemporaryFile
 
+import pytest
+
 import dramatic
 
 from .utils import (
@@ -73,13 +75,17 @@ def test_custom_speed(mocks):
 
 
 def test_control_c(mocks):
-    with dramatic.output:
+    with dramatic.output.at_speed(100):
         with patch_stdout(mocks):
             # Hit Ctrl-C (raise KeyboardInterrupt) after 5 characters
             mocks.clock.error_after = 5
             sys.stdout.write("Dramatic?\n")
+            sys.stdout.write("Still undramatic\n")
 
             mocks.clock.reset()
+            # No sleep until 1/100 * 5 + 500ms
+            assert sys.stdout.no_sleep_until == pytest.approx(0.55, 0.001)
+            sys.stdout.no_sleep_until = mocks.clock()
 
             # Hit Ctrl-C (raise KeyboardInterrupt) after 4 characters
             mocks.clock.error_after = 4
@@ -88,10 +94,14 @@ def test_control_c(mocks):
     assert [c[0] for c in mocks.mock_calls] == (
         ["stdout_write", "sleep"] * 5  # Slept 5 times successfully
         + ["stdout_write"] * 5  # No sleeps after Control-C
+        + ["stdout_write"] * 17  # No sleeps after Control-C
         + ["stdout_write", "sleep"] * 4  # Slept 4 times successfully
         + ["stdout_write"] * 3  # No sleeps after Control-C
-    ), "Sleep only called once"
-    assert b"".join(get_mock_args(mocks.stdout_write)) == b"Dramatic?\nHello!\n"
+    )
+    assert (
+        b"".join(get_mock_args(mocks.stdout_write))
+        == b"Dramatic?\nStill undramatic\nHello!\n"
+    )
 
 
 def test_writing_standard_error_dramatically(mocks):
