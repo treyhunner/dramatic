@@ -225,6 +225,7 @@ def test_max_drama_virtual_environment(mocks, mocker, tmp_path):
 
 def test_min_drama(mocks, mocker, tmp_path):
     mocker.patch("dramatic.getusersitepackages", return_value=str(tmp_path))
+    mocker.patch("sys.prefix", return_value=str(tmp_path))
 
     dramatic_py = tmp_path / "_dramatic.py"
     dramatic_pth = tmp_path / "_dramatic.pth"
@@ -241,20 +242,21 @@ def test_min_drama(mocks, mocker, tmp_path):
     assert not dramatic_py.exists()
     assert not dramatic_pth.exists()
 
-    assert_write_and_sleep_calls(
-        mocks,
-        dedent(
-            f"""
-            Deleted file {dramatic_pth}
-            Deleted file {dramatic_py}
-            No drama.
-            """
-        ).lstrip("\n"),
-    )
+    expected = dedent(
+        f"""
+        Removing dramatic.pth from global environment.
+        Deleted file {dramatic_pth}
+        Deleted file {dramatic_py}
+        No drama.
+        """
+    ).lstrip("\n")
+    assert b"".join(get_mock_args(mocks.stdout_write)) == expected.encode()
+    assert_write_and_sleep_calls(mocks, expected)
 
 
 def test_min_drama_no_files(mocks, mocker, tmp_path):
     mocker.patch("dramatic.getusersitepackages", return_value=str(tmp_path))
+    mocker.patch("sys.prefix", return_value=str(tmp_path))
 
     dramatic_py = tmp_path / "_dramatic.py"
     dramatic_pth = tmp_path / "_dramatic.pth"
@@ -269,13 +271,44 @@ def test_min_drama_no_files(mocks, mocker, tmp_path):
     assert not dramatic_py.exists()
     assert not dramatic_pth.exists()
 
-    assert_write_and_sleep_calls(
-        mocks,
-        dedent(
-            f"""
-            File not found: {dramatic_pth}
-            File not found: {dramatic_py}
-            No drama.
-            """
-        ).lstrip("\n"),
-    )
+    expected = dedent(
+        f"""
+        Removing dramatic.pth from global environment.
+        File not found: {dramatic_pth}
+        File not found: {dramatic_py}
+        No drama.
+        """
+    ).lstrip("\n")
+    assert b"".join(get_mock_args(mocks.stdout_write)) == expected.encode()
+    assert_write_and_sleep_calls(mocks, expected)
+
+
+def test_min_drama_virtual_environment(mocks, mocker, tmp_path):
+    mocker.patch("dramatic.getsitepackages", return_value=[str(tmp_path)])
+
+    dramatic_py = tmp_path / "_dramatic.py"
+    dramatic_pth = tmp_path / "_dramatic.pth"
+    dramatic_py.write_text("import _dramatic; _dramatic.start()\n")
+    dramatic_pth.write_text("import _dramatic; _dramatic.start()\n")
+
+    with patch_args(["--min-drama"]):
+        with patch_stdout(mocks), patch_stderr(mocks):
+            try:
+                dramatic.main()
+            except SystemExit as error:
+                assert error.args == (0,)
+
+    assert not dramatic_py.exists()
+    assert not dramatic_pth.exists()
+
+    expected = dedent(
+        f"""
+        Virtual environment detected.
+        Removing dramatic.pth from virtual environment.
+        Deleted file {dramatic_pth}
+        Deleted file {dramatic_py}
+        No drama.
+        """
+    ).lstrip("\n")
+    assert b"".join(get_mock_args(mocks.stdout_write)) == expected.encode()
+    assert_write_and_sleep_calls(mocks, expected)
