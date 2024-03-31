@@ -31,7 +31,7 @@ from importlib.util import find_spec
 from io import TextIOWrapper
 from pathlib import Path
 import runpy
-from site import getusersitepackages
+from site import getsitepackages, getusersitepackages
 import sys
 from textwrap import dedent
 from time import perf_counter, sleep
@@ -213,13 +213,21 @@ def main():
 
     # Monkey patch Python so all Python programs to print dramatically
     if args.max_drama:
-        site_packages = Path(getusersitepackages())
+        site_packages = Path(getsitepackages()[0])
+        if (Path(sys.prefix) / "pyvenv.cfg").exists():
+            print("Virtual environment detected.")
+            print("Make all Python scripts in this venv run dramatically?")
+        else:
+            site_packages = Path(getusersitepackages())
+            print("Make all global Python scripts run dramatically?")
         dramatic_py = site_packages / "_dramatic.py"
-        dramatic_pth = site_packages / "dramatic.pth"
-        print("This will cause all Python programs to run dramatically.")
+        dramatic_pth = site_packages / "_dramatic.pth"
         print("Running with --min-drama will undo this operation.")
-        if input("Are you sure? [y/N] ").casefold() != "y":
-            sys.exit("Okay. No drama.")
+        try:
+            if input("Are you sure? [y/N] ").casefold() != "y":
+                sys.exit("Okay. No drama.")
+        except KeyboardInterrupt:
+            sys.exit("\nOkay. No drama.")
         site_packages.mkdir(parents=True, exist_ok=True)
         dramatic_py.write_text(Path(__file__).read_text())
         print(f"Wrote file {dramatic_py}")
@@ -231,9 +239,15 @@ def main():
 
     # Un-monkey patch Python to stop printing dramatically by default
     if args.min_drama:
-        site_packages = Path(getusersitepackages())
+        site_packages = Path(getsitepackages()[0])
+        if (Path(sys.prefix) / "pyvenv.cfg").exists():
+            print("Virtual environment detected.")
+            print("Removing dramatic.pth from virtual environment.")
+        else:
+            site_packages = Path(getusersitepackages())
+            print("Removing dramatic.pth from global environment.")
         dramatic_py = site_packages / "_dramatic.py"
-        dramatic_pth = site_packages / "dramatic.pth"
+        dramatic_pth = site_packages / "_dramatic.pth"
         try:
             dramatic_pth.unlink()
         except FileNotFoundError:

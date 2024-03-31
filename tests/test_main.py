@@ -121,9 +121,10 @@ def test_file(mocks):
 
 def test_max_drama(mocks, mocker, tmp_path):
     mocker.patch("dramatic.getusersitepackages", return_value=str(tmp_path))
+    mocker.patch("sys.prefix", return_value=str(tmp_path))
 
     dramatic_py = tmp_path / "_dramatic.py"
-    dramatic_pth = tmp_path / "dramatic.pth"
+    dramatic_pth = tmp_path / "_dramatic.pth"
 
     with patch_args(["--max-drama"]):
         with patch_stdin("y\n"):
@@ -144,7 +145,7 @@ def test_max_drama(mocks, mocker, tmp_path):
 
     expected = dedent(
         f"""
-        This will cause all Python programs to run dramatically.
+        Make all global Python scripts run dramatically?
         Running with --min-drama will undo this operation.
         Are you sure? [y/N] Wrote file {dramatic_py}
         Wrote file {dramatic_pth}
@@ -158,9 +159,10 @@ def test_max_drama(mocks, mocker, tmp_path):
 
 def test_max_drama_no(mocks, mocker, tmp_path):
     mocker.patch("dramatic.getusersitepackages", return_value=str(tmp_path))
+    mocker.patch("sys.prefix", return_value=str(tmp_path))
 
     dramatic_py = tmp_path / "_dramatic.py"
-    dramatic_pth = tmp_path / "dramatic.pth"
+    dramatic_pth = tmp_path / "_dramatic.pth"
 
     with patch_args(["--max-drama"]):
         with patch_stdin("n\n"):
@@ -175,9 +177,47 @@ def test_max_drama_no(mocks, mocker, tmp_path):
 
     expected = dedent(
         """
-            This will cause all Python programs to run dramatically.
+            Make all global Python scripts run dramatically?
             Running with --min-drama will undo this operation.
             Are you sure? [y/N] """
+    ).lstrip("\n")
+    assert b"".join(get_mock_args(mocks.stdout_write)) == expected.encode()
+    assert_write_and_sleep_calls(mocks, expected)
+
+
+def test_max_drama_virtual_environment(mocks, mocker, tmp_path):
+    mocker.patch("dramatic.getsitepackages", return_value=[str(tmp_path)])
+
+    dramatic_py = tmp_path / "_dramatic.py"
+    dramatic_pth = tmp_path / "_dramatic.pth"
+
+    with patch_args(["--max-drama"]):
+        with patch_stdin("y\n"):
+            with patch_stdout(mocks), patch_stderr(mocks):
+                try:
+                    dramatic.main()
+                except SystemExit as error:
+                    assert error.args == (0,)
+
+    assert dramatic_py.exists()
+    assert dramatic_pth.exists()
+
+    dramatic_py_text = dramatic_py.read_text()
+    assert "def start(" in dramatic_py_text
+
+    dramatic_pth_text = dramatic_pth.read_text()
+    assert dramatic_pth_text == "import _dramatic; _dramatic.start()\n"
+
+    expected = dedent(
+        f"""
+        Virtual environment detected.
+        Make all Python scripts in this venv run dramatically?
+        Running with --min-drama will undo this operation.
+        Are you sure? [y/N] Wrote file {dramatic_py}
+        Wrote file {dramatic_pth}
+        To undo run:
+        {sys.executable} -m _dramatic --min-drama
+        """
     ).lstrip("\n")
     assert b"".join(get_mock_args(mocks.stdout_write)) == expected.encode()
     assert_write_and_sleep_calls(mocks, expected)
@@ -187,7 +227,7 @@ def test_min_drama(mocks, mocker, tmp_path):
     mocker.patch("dramatic.getusersitepackages", return_value=str(tmp_path))
 
     dramatic_py = tmp_path / "_dramatic.py"
-    dramatic_pth = tmp_path / "dramatic.pth"
+    dramatic_pth = tmp_path / "_dramatic.pth"
     dramatic_py.write_text("import _dramatic; _dramatic.start()\n")
     dramatic_pth.write_text("import _dramatic; _dramatic.start()\n")
 
@@ -217,7 +257,7 @@ def test_min_drama_no_files(mocks, mocker, tmp_path):
     mocker.patch("dramatic.getusersitepackages", return_value=str(tmp_path))
 
     dramatic_py = tmp_path / "_dramatic.py"
-    dramatic_pth = tmp_path / "dramatic.pth"
+    dramatic_pth = tmp_path / "_dramatic.pth"
 
     with patch_args(["--min-drama"]):
         with patch_stdout(mocks), patch_stderr(mocks):

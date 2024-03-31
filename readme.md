@@ -235,6 +235,9 @@ This even works if you don't have the `dramatic` module installed.
 Just download [dramatic.py](https://github.com/treyhunner/dramatic/blob/main/dramatic.py) and run it with `--max-drama`!
 To disable the drama, you'll need to run `python3 -m _dramatic --min-drama` (not the `_` before `dramatic`).
 
+**Warning**: this *is* probably a bad idea.
+Use with caution.
+
 
 Other Features
 --------------
