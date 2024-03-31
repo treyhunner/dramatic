@@ -185,6 +185,34 @@ def test_max_drama_no(mocks, mocker, tmp_path):
     assert_write_and_sleep_calls(mocks, expected)
 
 
+def test_max_keyboard_interrupt(mocks, mocker, tmp_path):
+    mocker.patch("dramatic.getusersitepackages", return_value=str(tmp_path))
+    mocker.patch("sys.prefix", return_value=str(tmp_path))
+    mocker.patch("builtins.input", side_effect=KeyboardInterrupt)
+
+    dramatic_py = tmp_path / "_dramatic.py"
+    dramatic_pth = tmp_path / "_dramatic.pth"
+
+    with patch_args(["--max-drama"]):
+        with patch_stdout(mocks), patch_stderr(mocks):
+            try:
+                dramatic.main()
+            except SystemExit as error:
+                assert str(error) == "\nOkay. No drama."
+
+    assert not dramatic_py.exists()
+    assert not dramatic_pth.exists()
+
+    expected = dedent(
+        """
+            Make all global Python scripts run dramatically?
+            Running with --min-drama will undo this operation.
+            """
+    ).lstrip("\n")
+    assert b"".join(get_mock_args(mocks.stdout_write)) == expected.encode()
+    assert_write_and_sleep_calls(mocks, expected)
+
+
 def test_max_drama_virtual_environment(mocks, mocker, tmp_path):
     mocker.patch("dramatic.getsitepackages", return_value=[str(tmp_path)])
 
