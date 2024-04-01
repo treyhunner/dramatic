@@ -1,12 +1,15 @@
-Make your Python output dramatic
-================================
+Make your Python output dramatic 🎭
+==================================
 
 [![PyPI - Version](https://img.shields.io/pypi/v/dramatic.svg?label=PyPI)](https://pypi.org/project/dramatic/)
 [![License](https://img.shields.io/pypi/l/dramatic?label=License)](https://opensource.org/licenses/MIT)
 [![Tests](https://github.com/treyhunner/dramatic/actions/workflows/test.yml/badge.svg "Tests")](https://github.com/treyhunner/dramatic/actions?workflow=test)
 [![Codecov](https://codecov.io/gh/treyhunner/dramatic/graph/badge.svg?token=e2Ah1TKt3g&label=Codecov "Coverage")](https://codecov.io/gh/treyhunner/dramatic)
 
-The `dramatic` module includes utilities to cause all text output to display character-by-character (it prints *dramatically*).
+The `dramatic` module includes utilities which cause all text output to display character-by-character (it prints *dramatically*).
+
+
+![dramatic printing within a terminal](https://raw.githubusercontent.com/treyhunner/dramatic/main/screenshots/main.gif)
 
 **Note**: This project is based on a [Python Morsels](https://www.pythonmorsels.com) exercise.
 If you're working on that exercise right now, please don't look at the source code for this! 😉
@@ -16,11 +19,8 @@ If you're working on that exercise right now, please don't look at the source co
 </a>
 
 
-![dramatic printing within a terminal](https://raw.githubusercontent.com/treyhunner/dramatic/main/screenshots/main.gif)
-
-
-Usage
------
+Usage 🥁
+-------
 
 The `dramatic` module is available on [PyPI][].
 You can install it with `pip`:
@@ -31,14 +31,14 @@ $ python3 -m pip install dramatic
 
 There are four primary ways to use the utilities in the `dramatic` module:
 
-1. As a context manager that temporarily makes output display dramatically
-2. As a decorator that temporarily makes output display dramatically
+1. As a **context manager** that temporarily makes output display dramatically
+2. As a **decorator** that temporarily makes output display dramatically
 3. Using a `dramatic.start()` function that makes output display dramatically
 4. Using a `dramatic.print` function to display specific text dramatically
 
 
-Dramatic Context Manager
-------------------------
+Dramatic Context Manager 🚪
+--------------------------
 
 The `dramatic.output` [context manager][] will temporarily cause all standard output and standard error to display dramatically:
 
@@ -70,8 +70,8 @@ Example context manager usage:
 ![dramatic.output context manager demo](https://raw.githubusercontent.com/treyhunner/dramatic/main/screenshots/context.gif)
 
 
-Dramatic Decorator
-------------------
+Dramatic Decorator 🎀
+--------------------
 
 The `dramatic.output` [decorator][] will cause all standard output and standard error to display dramatically while the decorated function is running:
 
@@ -103,8 +103,8 @@ Example decorator usage:
 ![dramatic.output decorator demo](https://raw.githubusercontent.com/treyhunner/dramatic/main/screenshots/decorator.gif)
 
 
-Manually Starting and Stopping
-------------------------------
+Manually Starting and Stopping 🔧
+--------------------------------
 
 Instead of enabling dramatic printing temporarily with a context manager or decorator, the `dramatic.start` function may be used to enable dramatic printing:
 
@@ -163,8 +163,8 @@ Example `start` and `stop` usage:
 ![dramatic.start decorator demo](https://raw.githubusercontent.com/treyhunner/dramatic/main/screenshots/start.gif)
 
 
-Dramatic Print
---------------
+Dramatic Print 🖨️
+----------------
 
 The `dramatic.print` function acts just like the built-in `print` function, but it prints dramatically:
 
@@ -174,8 +174,8 @@ dramatic.print("This will print some text dramatically")
 ```
 
 
-Dramatic Interpreter
---------------------
+Dramatic Interpreter ⌨️
+----------------------
 
 To start a dramatic [Python REPL][]:
 
@@ -204,8 +204,8 @@ In this example we're increasing the speed from 75 characters-per-second to 120:
 ![dramatic module running demo](https://raw.githubusercontent.com/treyhunner/dramatic/main/screenshots/module.gif)
 
 
-Maximum Drama
--------------
+Maximum Drama (Use With Caution ⚠️)
+----------------------------------
 
 Want to make your Python interpreter dramatic *by default*?
 
@@ -218,6 +218,8 @@ Running --min-drama will undo this operation.
 Are you sure? [y/N]
 ```
 
+Example:
+
 ![python3 -m dramatic --max-drama](https://raw.githubusercontent.com/treyhunner/dramatic/main/screenshots/max.gif)
 
 If the drama is too much, run the module again with the argument `--min-drama` to undo:
@@ -229,27 +231,29 @@ Deleted file /home/trey/.local/lib/python3.12/site-packages/_dramatic.py
 No drama.
 ```
 
+Example:
+
 ![python3 -m dramatic --min-drama](https://raw.githubusercontent.com/treyhunner/dramatic/main/screenshots/min.gif)
 
 This even works if you don't have the `dramatic` module installed.
 Just download [dramatic.py](https://github.com/treyhunner/dramatic/blob/main/dramatic.py) and run it with `--max-drama`!
-To disable the drama, you'll need to run `python3 -m _dramatic --min-drama` (not the `_` before `dramatic`).
+To disable the drama, you'll need to run `python3 -m _dramatic --min-drama` (note the `_` before `dramatic`).
 
-**Warning**: this *is* probably a bad idea.
+**Warning**: using `--max-drama` is *probably a bad idea*.
 Use with caution.
 
 
-Other Features
---------------
+Other Features ✨
+----------------
 
 Other features of note:
 
 - Pressing `Ctrl-C` while text is printing dramatically will cause the remaining text to print immediately.
-- Dramatic printing is automatically disabled when the output stream is piped to a file (e.g. `python my_script.py > output.txt`)
+- Dramatic printing is automatically disabled when the output stream is piped to a file (e.g. `python3 my_script.py > output.txt`)
 
 
-Credits
--------
+Credits 💖
+---------
 
 This package was inspired by [the **dramatic print** Python Morsels exercise][dramatic print], which was partially inspired by Brandon Rhodes' [adventure][] Python port (which displays its text at 1200 baud).
 
