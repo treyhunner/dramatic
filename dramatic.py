@@ -94,14 +94,14 @@ class DramaticTextIOWrapper(TextIOWrapper):
         if current == " ":
             # Slowing this down too much looks unnatural
             # Break it up into chunks of 4
-            if (not indenting) or ((indenting % 4) == 0):
+            if indenting and ((indenting % 4) == 0):
                 mult += 5
             else:
                 # Don't make people sit through boring indents
                 if not indenting:
-                    return 1.2
+                    return 1.3
                 else:
-                    return 0.6
+                    return 0.8
 
         elif current == "\n" and prv != "\n" and nxt != "\n":
             mult += 5
@@ -114,7 +114,7 @@ class DramaticTextIOWrapper(TextIOWrapper):
 
         # These are natural pauses in speech and brackets can be confusing
         elif current in ",.-;:!?—-()[]{}<>":
-            mult += max(7, random.normalvariate(7, 5))
+            mult += max(6, random.normalvariate(8, 5))
 
         elif current in """`@#$%^&*_+='"/‘’""":
             mult += 4
