@@ -33,6 +33,7 @@ from pathlib import Path
 import runpy
 from site import getsitepackages, getusersitepackages
 import sys
+import random
 from textwrap import dedent
 from time import perf_counter, sleep
 
@@ -63,20 +64,127 @@ class DramaticTextIOWrapper(TextIOWrapper):
         self.detach()
         super().__del__()
 
-    def write(self, string):
+    def get_delay_multiplier(
+        self, prv: str, current: str, nxt: str, indenting: int
+    ) -> float:
+        """Given the prev, current, and next keys, return a multiplier representing
+        how slow it wil be to type.
+
+        Prv should be <START> and nxt should be <END> if there is no prev or next,
+        respectively.
+
+        Indenting is a positive int if current is part of the newline or
+        indentation.
+        """
+
+        mult = 1.0
+
+        if current not in "asdfghjkl;'":
+            mult += 0.2
+
+        # Assume it takes time to press shift but holding it
+        # only slows slightly
+        if current == current.upper():
+            if not prv == prv.upper():
+                mult += 0.25
+            else:
+                mult += 0.08
+
+        # Assume words and lines are mental context changes with a little delay
+        if current == " ":
+            # Slowing this down too much looks unnatural
+            # Break it up into chunks of 4
+            if indenting and ((indenting % 4) == 0):
+                mult += 5
+            else:
+                # Don't make people sit through boring indents
+                if not indenting:
+                    return 1.3
+                else:
+                    return 0.8
+
+        elif current == "\n" and nxt != "\n":
+            mult += 6
+        # Assume we slow down and are really careful on longer numbers
+        elif current in "1234567890." and nxt in "1234567890.":
+            mult += 5
+
+            if prv in "1234567890.":
+                mult += 2
+
+        # These are natural pauses in speech and brackets can be confusing
+        elif current in ",.-;:!?—-()[]{}<>":
+            mult += max(6, random.normalvariate(8, 5))
+
+        elif current in """`@#$%^&*_+='"/‘’""":
+            mult += 5
+
+        # Limit range for consistency
+        mult += min(5, max(random.normalvariate(0, 0.4), 0.3))
+
+        if random.random() < 0.03:
+            mult += max(0, random.normalvariate(3, 3))
+
+        return max(mult, 0.7)
+
+    def write(self, string: str):
         """
         Write dramatically, but only if this is a terminal device.
 
         If Ctrl-C is pressed, the remaining text will print immediately.
         """
+        indenting = 1
+
+        # This is used to add long term patterns of speed change
+        variation = 1.0
+
         if self.isatty():
-            for char in string:
+            for i, current in enumerate(string):
+                if random.random() < 0.05:
+                    # Add input and divide by two is a very crude first order lowpass filter
+                    variation = (
+                        variation + min(1.2, max(0.7, random.normalvariate(1, 0.4)))
+                    ) / 2
+
+                # Simulate fatigue, as typing goes on slow down till the
+                # Random variation code speeds it back up
+                if random.random() < 0.2:
+                    variation = max(0.8, variation - 0.03)
+
+                # Get the prev, next, and current,
+                # if at start or end , use special marker strings
+                # to make the code simpler
+                nxt = "<END>"
+                prv = "<START>"
+                if current in "\r\n":
+                    indenting = 1
+
+                elif indenting and current in " \t":
+                    indenting += 1
+
+                if current not in " \t\r\n":
+                    indenting = 0
+
+                if i > 0:
+                    prv = string[i - 1]
+                if i < (len(string) - 1):
+                    nxt = string[i + 1]
+
                 before = perf_counter()
-                super().write(char)
+                super().write(current)
                 super().flush()
                 if before >= self.no_sleep_until:
                     try:
-                        sleep(1 / self.speed - (perf_counter() - before))
+                        sleep(
+                            1
+                            / (
+                                (self.speed * variation)
+                                / self.get_delay_multiplier(
+                                    prv, current, nxt, indenting
+                                )
+                            )
+                            - (perf_counter() - before)
+                        )
                     except KeyboardInterrupt:
                         self.no_sleep_until = perf_counter() + 0.5
         else:
