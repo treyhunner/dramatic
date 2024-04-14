@@ -103,8 +103,8 @@ class DramaticTextIOWrapper(TextIOWrapper):
                 else:
                     return 0.8
 
-        elif current == "\n" and prv != "\n" and nxt != "\n":
-            mult += 5
+        elif current == "\n" and nxt != "\n":
+            mult += 6
         # Assume we slow down and are really careful on longer numbers
         elif current in "1234567890." and nxt in "1234567890.":
             mult += 5
@@ -117,7 +117,7 @@ class DramaticTextIOWrapper(TextIOWrapper):
             mult += max(6, random.normalvariate(8, 5))
 
         elif current in """`@#$%^&*_+='"/‘’""":
-            mult += 4
+            mult += 5
 
         # Limit range for consistency
         mult += min(5, max(random.normalvariate(0, 0.4), 0.3))
@@ -140,11 +140,17 @@ class DramaticTextIOWrapper(TextIOWrapper):
 
         if self.isatty():
             for i, current in enumerate(string):
-                if random.random() < 0.1:
+                if random.random() < 0.05:
                     # Add input and divide by two is a very crude first order lowpass filter
                     variation = (
-                        variation + min(1.2, max(0.8, random.normalvariate(1, 0.4)))
+                        variation + min(1.2, max(0.7, random.normalvariate(1, 0.4)))
                     ) / 2
+
+                # Simulate fatigue, as typing goes on slow down till the
+                # Random variation code speeds it back up
+                if random.random() < 0.2:
+                    variation = max(0.8, variation - 0.03)
+
                 # Get the prev, next, and current,
                 # if at start or end , use special marker strings
                 # to make the code simpler
