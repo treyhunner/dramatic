@@ -135,8 +135,16 @@ class DramaticTextIOWrapper(TextIOWrapper):
         """
         indenting = 1
 
+        # This is used to add long term patterns of speed change
+        variation = 1.0
+
         if self.isatty():
             for i, current in enumerate(string):
+                if random.random() < 0.1:
+                    # Add input and divide by two is a very crude first order lowpass filter
+                    variation = (
+                        variation + min(1.2, max(0.8, random.normalvariate(1, 0.4)))
+                    ) / 2
                 # Get the prev, next, and current,
                 # if at start or end , use special marker strings
                 # to make the code simpler
@@ -164,7 +172,7 @@ class DramaticTextIOWrapper(TextIOWrapper):
                         sleep(
                             1
                             / (
-                                self.speed
+                                (self.speed * variation)
                                 / self.get_delay_multiplier(
                                     prv, current, nxt, indenting
                                 )
