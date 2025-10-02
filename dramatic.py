@@ -76,7 +76,10 @@ class DramaticTextIOWrapper(TextIOWrapper):
                 super().flush()
                 if before >= self.no_sleep_until:
                     try:
-                        sleep(1 / self.speed - (perf_counter() - before))
+                        elapsed = perf_counter() - before
+                        sleep_duration = 1 / self.speed - elapsed
+                        if sleep_duration > 0:
+                            sleep(sleep_duration)
                     except KeyboardInterrupt:
                         self.no_sleep_until = perf_counter() + 0.5
         else:

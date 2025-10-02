@@ -147,3 +147,45 @@ def test_exiting_stops_monkey_patching(mocks):
     assert len(mocks.stdout_write.mock_calls) < 3
     assert get_mock_args(mocks.stderr_write) == [b"Error\n"]
     assert len(mocks.clock.sleeps) == 0
+
+
+def test_slow_write_does_not_raise_error(mocker):
+    """Test that slow write operations don't cause negative sleep ValueError."""
+    from .utils import Clock
+
+    class SlowClock(Clock):
+        """Clock that simulates slow write operations."""
+
+        def __init__(self):
+            super().__init__()
+            self.call_count = 0
+            self.time_per_write = 0.02  # 20ms per write operation
+
+        def __call__(self):
+            # Alternate between returning base time and base time + write overhead
+            result = sum(self.sleeps)
+            if self.call_count % 2 == 1:
+                # Second call in a pair (after write) - add write overhead
+                result += self.time_per_write
+            self.call_count += 1
+            return result
+
+    slow_clock = SlowClock()
+    mocker.patch("time.perf_counter", new=slow_clock)
+    sleep_mock = mocker.patch("time.sleep", side_effect=slow_clock.increment)
+
+    # Reload module to pick up new patches
+    from importlib import reload
+
+    reload(dramatic)
+
+    # With default speed of 75 chars/sec, target time is ~13.3ms per char
+    # Our slow write takes 20ms, which would cause negative sleep without the fix
+    with dramatic.output:
+        with patch_stdout(mocker.Mock()):
+            # This should not raise ValueError
+            sys.stdout.write("Hi")
+
+    # Verify that sleep was called only when duration was positive
+    # With 20ms writes and 13.3ms target, no sleeps should occur
+    assert len(slow_clock.sleeps) == 0
