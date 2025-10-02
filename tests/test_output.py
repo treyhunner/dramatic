@@ -54,9 +54,10 @@ def test_string_representation(mocks):
     with patch_stdout(mocks):
         with dramatic.output:
             print(sys.stdout)
-    assert get_mock_args(mocks.stdout_write) == byte_list(
-        "DramaticTextIOWrapper(<_io.FileIO name=6 mode='rb+' closefd=True>)\n"
-    )
+    output = b"".join(get_mock_args(mocks.stdout_write)).decode()
+    # File descriptor number can vary, so check the pattern instead
+    assert output.startswith("DramaticTextIOWrapper(<_io.FileIO name=")
+    assert " mode='rb+' closefd=True>)\n" in output
     assert [c[0] for c in mocks.mock_calls] == ["stdout_write", "sleep"] * 67
 
 
@@ -149,6 +150,33 @@ def test_exiting_stops_monkey_patching(mocks):
     assert len(mocks.clock.sleeps) == 0
 
 
+@pytest.mark.filterwarnings("error::pytest.PytestUnraisableExceptionWarning")
+def test_cleanup_with_closed_buffer(mocker):
+    """Test that __del__ doesn't raise error when buffer is already closed."""
+    import gc
+    from tempfile import TemporaryFile
+
+    import dramatic
+
+    # Create a real temporary file buffer
+    temp_file = TemporaryFile(mode="w+b")
+
+    # Create a DramaticTextIOWrapper with the temp buffer
+    wrapper = dramatic.DramaticTextIOWrapper(temp_file, speed=75)
+
+    # Close the underlying buffer to simulate cleanup race condition
+    temp_file.close()
+
+    # Mock the detach method to raise ValueError instead of actually detaching
+    # This simulates what happens during cleanup when buffer is already closed
+    wrapper.detach = mocker.Mock(side_effect=ValueError("I/O operation on closed file"))
+
+    # Delete the wrapper and force garbage collection
+    # If __del__ doesn't catch the ValueError, pytest will raise PytestUnraisableExceptionWarning as error
+    del wrapper
+    gc.collect()
+
+
 def test_slow_write_does_not_raise_error(mocker):
     """Test that slow write operations don't cause negative sleep ValueError."""
     from .utils import Clock
@@ -172,7 +200,7 @@ def test_slow_write_does_not_raise_error(mocker):
 
     slow_clock = SlowClock()
     mocker.patch("time.perf_counter", new=slow_clock)
-    sleep_mock = mocker.patch("time.sleep", side_effect=slow_clock.increment)
+    mocker.patch("time.sleep", side_effect=slow_clock.increment)
 
     # Reload module to pick up new patches
     from importlib import reload

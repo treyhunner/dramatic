@@ -51,8 +51,6 @@ dependencies = [
   "ruff",
 ]
 [tool.hatch.envs.default.scripts]
-test = "pytest {args:tests}"
-test-cov = "coverage run -m pytest {args:tests}"
 cov-report = [
   "- coverage combine",
   "coverage html",
@@ -62,26 +60,16 @@ cov-report-xml = [
   "- coverage combine",
   "coverage xml",
 ]
-cov = [
-  "test-cov",
-  "cov-report",
-]
-ci-cov = [
-  "test-cov",
-  "cov-report-xml",
-]
 lint = [
   "ruff format .",
   "ruff check --fix .",
-  "mypy {{ cookiecutter.package_name }}/",
 ]
 lint-check = [
   "ruff format --check .",
   "ruff check .",
-  "mypy {{ cookiecutter.package_name }}/",
 ]
 
-[[tool.hatch.envs.all.matrix]]
+[[tool.hatch.envs.hatch-test.matrix]]
 python = ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14", "pypy3.10"]
 
 [tool.coverage.run]
