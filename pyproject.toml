@@ -7,8 +7,9 @@ name = "dramatic"
 dynamic = ["version"]
 description = "Display all Python process output character-by-character"
 readme = "readme.md"
-requires-python = ">=3.8"
-license = "MIT"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+license-files = {globs = []}
 keywords = [
   "Python Morsels",
   "modem",
@@ -24,13 +25,13 @@ classifiers = [
   "Development Status :: 4 - Beta",
   "License :: OSI Approved :: MIT License",
   "Programming Language :: Python",
-  "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Programming Language :: Python :: Implementation :: CPython",
-  "Programming Language :: Python :: Implementation :: PyPy",
 ]
 dependencies = []
 
@@ -50,8 +51,6 @@ dependencies = [
   "ruff",
 ]
 [tool.hatch.envs.default.scripts]
-test = "pytest {args:tests}"
-test-cov = "coverage run -m pytest {args:tests}"
 cov-report = [
   "- coverage combine",
   "coverage html",
@@ -61,27 +60,17 @@ cov-report-xml = [
   "- coverage combine",
   "coverage xml",
 ]
-cov = [
-  "test-cov",
-  "cov-report",
-]
-ci-cov = [
-  "test-cov",
-  "cov-report-xml",
-]
 lint = [
   "ruff format .",
   "ruff check --fix .",
-  "mypy {{ cookiecutter.package_name }}/",
 ]
 lint-check = [
   "ruff format --check .",
   "ruff check .",
-  "mypy {{ cookiecutter.package_name }}/",
 ]
 
-[[tool.hatch.envs.all.matrix]]
-python = ["3.8", "3.9", "3.10", "3.11", "3.12", "pypy3.10"]
+[[tool.hatch.envs.hatch-test.matrix]]
+python = ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
 
 [tool.coverage.run]
 source_pkgs = ["dramatic", "tests"]
@@ -94,7 +83,7 @@ exclude_lines = [
 ]
 
 [tool.ruff]
-target-version = "py38"
+target-version = "py39"
 
 [tool.ruff.lint]
 extend-select = ["I", "TRY", "UP"]

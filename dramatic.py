@@ -25,7 +25,7 @@ To print dramatically for the rest of your Python process:
 
 from argparse import ArgumentParser
 import code
-from contextlib import ContextDecorator, ExitStack
+from contextlib import ContextDecorator, ExitStack, suppress
 from fractions import Fraction
 from importlib.util import find_spec
 from io import TextIOWrapper
@@ -36,7 +36,7 @@ import sys
 from textwrap import dedent
 from time import perf_counter, sleep
 
-__version__ = "0.4.1.post1"
+__version__ = "0.5.0"
 __all__ = []  # Disable "from dramatic import *"
 _DEFAULT_SPEED = 75
 
@@ -60,7 +60,8 @@ class DramaticTextIOWrapper(TextIOWrapper):
 
     def __del__(self):
         """Detach the buffer so it won't close as we're deleted."""
-        self.detach()
+        with suppress(ValueError):  # In case buffer is already closed
+            self.detach()
         super().__del__()
 
     def write(self, string):
@@ -76,7 +77,10 @@ class DramaticTextIOWrapper(TextIOWrapper):
                 super().flush()
                 if before >= self.no_sleep_until:
                     try:
-                        sleep(1 / self.speed - (perf_counter() - before))
+                        elapsed = perf_counter() - before
+                        sleep_duration = 1 / self.speed - elapsed
+                        if sleep_duration > 0:
+                            sleep(sleep_duration)
                     except KeyboardInterrupt:
                         self.no_sleep_until = perf_counter() + 0.5
         else:

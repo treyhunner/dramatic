@@ -41,4 +41,3 @@ def auto_flush():
     """Flush output streams before each test."""
     sys.stdout.flush()
     sys.stderr.flush()
-    yield
