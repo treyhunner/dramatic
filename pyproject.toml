@@ -8,7 +8,8 @@ dynamic = ["version"]
 description = "Display all Python process output character-by-character"
 readme = "readme.md"
 requires-python = ">=3.9"
-license = "MIT"
+license = {text = "MIT"}
+license-files = {globs = []}
 keywords = [
   "Python Morsels",
   "modem",
