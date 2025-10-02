@@ -83,7 +83,7 @@ lint-check:
 # Run all quality checks and tests
 check:
     just fmt
-    just test
+    just test-all-parallel
 
 # Bump version
 bump value:
